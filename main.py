@@ -1,23 +1,27 @@
 from crewai import Crew
-from tools import NumVerifyTool, IpStackTool, MarketStackTool
+from tools import NumVerifyTool, NewsApiTool, MarketStackTool
 from agents import AgentFactory
 from tasks import TaskFactory
 
 print("🔧 Inicializando...")
 
-# Instanciar ferramentas
-tools = [NumVerifyTool(), IpStackTool(), MarketStackTool()]
+tools = [NumVerifyTool(), NewsApiTool(), MarketStackTool()]
 
-# Criar agente com as ferramentas
-analista = AgentFactory.get_agent(tools)
+phone_agent = AgentFactory.get_phone_agent(tools)
+ia_agent = AgentFactory.get_ia_agent(tools)
+stock_agent = AgentFactory.get_stock_agent(tools)
 
-# Criar tarefas
-tarefas = TaskFactory.get_tasks(analista)
+tasks = TaskFactory.get_tasks(phone_agent, ia_agent, stock_agent)
 
-# Criar equipe e executar
-crew = Crew(agents=[analista], tasks=tarefas, verbose=True)
-print("🚀 Executando tarefa...")
+crew = Crew(
+    agents=[phone_agent, ia_agent, stock_agent],
+    tasks=tasks,
+    verbose=True,
+    max_iterations=1
+)
+
+
+print("🚀 Executando tarefas...")
 resultado = crew.kickoff()
 
-print("\n✅ Resultado Final:")
-print(resultado)
+print("\n✅ Resultados das tarefas em output/")

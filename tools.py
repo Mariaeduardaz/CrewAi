@@ -6,28 +6,41 @@ class NumVerifyTool(BaseTool):
     name: str = "Validador de Número"
     description: str = "Valida números de telefone e retorna informações como país e operadora."
 
-    def _run(self, number: str = "+5511987654321") -> str:
+    def _run(self, number: str = "+5549991921307") -> str:
         response = requests.get(
-            f"http://apilayer.net/api/validate?access_key=9af9a375a1c594a0746b6747121e6efe&number={number}&country_code=&format=1"
+            f"http://apilayer.net/api/validate?access_key=5a88cad60f9af373b7956c75bf2edcc1&number={number}&country_code=&format=1"
         )
         return str(response.json())
 
-class IpStackTool(BaseTool):
-    name: str = "Localizador de IP"
-    description: str = "Retorna informações sobre um endereço IP, como país e cidade."
+class NewsApiTool(BaseTool):
+    name: str = "Notícias sobre IA"
+    description: str = "Busca uma notícia popular sobre inteligência artificial."
 
-    def _run(self, ip: str = "187.75.194.108") -> str:
+    def _run(self, _: str = "") -> str:
         response = requests.get(
-            f"http://api.ipstack.com/{ip}?access_key=96d3b66af2bf4f16f7f4bb7c26679eb5"
+            "https://newsapi.org/v2/everything",
+            params={
+                "q": "inteligência artificial",
+                "from": "2025-05-21",
+                "to": "2025-05-21",
+                "sortBy": "popularity",
+                "pageSize": 1,
+                "apiKey": "3c11dbcb45a1426f9d14f1b4298b03e9"
+            }
         )
-        return str(response.json())
+        data = response.json()
+        if data.get("articles"):
+            article = data["articles"][0]
+            return f"Título: {article['title']}\nDescrição: {article['description']}\nURL: {article['url']}"
+        return "Nenhuma notícia encontrada sobre inteligência artificial."
+
 
 class MarketStackTool(BaseTool):
     name: str = "Consulta de Ações"
     description: str = "Retorna dados de mercado de ações para uma empresa específica."
 
-    def _run(self, symbol: str = "AAPL") -> str:
+    def _run(self, symbol: str = "TSLA") -> str:
         response = requests.get(
-            f"http://api.marketstack.com/v1/eod?access_key=0b999b553c14f62b7463008c7ae4d70f&symbols={symbol}"
+            f"http://api.marketstack.com/v1/eod?access_key=a2dd96156ae00e4e779c77c4f0f95d31&symbols={symbol}&limit=1"
         )
         return str(response.json())
